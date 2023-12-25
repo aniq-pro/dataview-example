@@ -1,0 +1,16 @@
+dataApiUrl placeholders :
+{last:index} | last:index for last index. fetch starting from last:index in api. (ex) : already fetch data last index is 40 and when fetch more data last:index is 39 
+{last:counter} | last:counter for last counter/row/lenght. fetch starting from last:counter in api. (ex) : already fetch data last index is 40 and when fetch more data last:counter is 40 
+{last:column} | last:column for last index column. fetch starting from last:column in api.
+{last} | last is same as {last:index}
+
+{perPage} | perPage is for perPage means how many data show in one page.
+
+example : dataApiUrl: "https://jsonplaceholder.typicode.com/posts?start={last:id}&perPage={perPage}"
+
+searchApi placeholders :
+{query} | query is simple search query
+{searchCaseSensitive} | searchCaseSensitive is for know that search CaseSensitive and not | its return true or false
+{column} | column is for know that search on which column | column return searchIn config.
+
+example : searchApi: "https://jsonplaceholder.typicode.com/posts?query={query}&searchCaseSensitive={searchCaseSensitive}&column={column}"

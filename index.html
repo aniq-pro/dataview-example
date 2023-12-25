@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DataView Js Library By Aniq Abid</title>
+  <link rel="stylesheet" href="bootstrap.min.css">
+  <link rel="stylesheet" href="DataView/animations.css">
+  <link rel="stylesheet" href="style.css">
+  <script src="script.js" type="module" defer></script>
+</head>
+<body>
+  <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <div class="container-fluid">
+      <a class="navbar-brand" href="#">DataView Demo</a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
+        aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+          <li class="nav-item">
+            <a class="nav-link active" aria-current="page" href="#">Home</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link active" aria-current="page" href="#">Problem on pagination search and previousPage</a>
+          </li>
+        </ul>
+        <form class="d-flex">
+          <select id="searchColumnsSelect" class="form-control me-2"></select>
+          <input class="form-control me-2" type="search" placeholder="Search" id="searchInput" aria-label="Search">
+          <button class="btn btn-outline-primary" type="button">Search</button>
+        </form>
+      </div>
+    </div>
+  </nav>
+  <div class="container">
+    <div class="row mt-4">
+      <div class="col-md-8 col-lg-6 d-flex align-items-center">
+        <input type="number" id="perPageInput" class="form-control me-2" style="width: 150px;" value="20">
+        <!-- <select class="form-control me-2" style="width: 200px;" id="perPageInput">
+          <option value="10">10</option>
+          <option value="20" selected>20</option>
+          <option value="30">30</option>
+          <option value="40">40</option>
+          <option value="50">50</option>
+          <option value="100">100</option>
+          <option value="150">150</option>
+          <option value="250">250</option>
+          <option value="500">500</option>
+          <option value="1000">1000</option>
+          <option value="1500">1500</option>
+          <option value="2000">2000</option>
+          <option value="2500">2500</option>
+          <option value="all">all</option>
+        </select> -->
+        <ul class="nav nav-pills" id="viewBtns">
+          <li class="nav-item">
+            <button class="nav-link active grid">Grid</button>
+          </li>
+          <li class="nav-item">
+            <button class="nav-link list">List</button>
+          </li>
+          <li class="nav-item">
+            <button class="nav-link table mb-0">Table</button>
+          </li>
+        </ul> 
+
+        <ul class="nav nav-pills ms-4">
+          <li class="nav-item d-flex">
+            <label for="selectionBtn" class="text-white btn btn-primary d-flex align-items-center">
+              Selection
+              <input type="checkbox" id="selectionBtn" class="ms-2">
+            </label>
+          </li>
+        </ul> 
+      </div>
+      <div class="col-md-4 col-lg-6 d-flex justify-content-end align-items-center">
+        <nav aria-label="Page navigation example">
+          <ul class="pagination">
+            <li class="page-item" title="Previous Page">
+              <button class="page-link" aria-label="Previous" id="previousPage">
+                <span aria-hidden="true">&laquo;</span>
+              </button>
+            </li>
+            <div class="d-flex" id="paginationPagesBox">
+            </div>
+            <li class="page-item" title="Next Page">
+              <button class="page-link" aria-label="Next" id="nextPage">
+                <span aria-hidden="true">&raquo;</span>
+              </button>
+            </li>
+          </ul>
+        </nav>
+      </div>
+    </div>
+
+    <div class="row mt-4">
+      <div class="col">
+        <div id="viewContainer" ></div>
+        <!-- <img src="images/google pixel 7a.jpg" width="400px" alt=""> -->
+        <!-- <input type="checkbox" selection="" style="position: absolute;top: 5px;left: 5px;z-index: 5;"> -->
+      </div>
+    </div>
+  </div>
+</body>
+
+</html>

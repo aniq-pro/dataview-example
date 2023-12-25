@@ -1,0 +1,40 @@
+Pagination:
+    perPage: Number of items per page. Default is 20.
+
+Grid View Configuration:
+    gridGap: Gap between grid items. Default is '10px'.
+    gridItemMinWidth: Minimum width of grid items. Default is '200px'.
+    gridItemWidth: Width of grid items or "fit" for dynamic width.. Default is 'fit'.
+
+List View Configuration:
+    listGap: Gap between list items. Default is '10px'.
+    listItemMinWidth: Minimum width of list items. Default is '500px'.
+    listItemWidth: Width of list items or "fit" for dynamic width.. Default is 'fit'.
+
+Positioning:
+    position: Position of the view (grid/list/table) within the container. Default is dataView.POSITIONS.LEFT.
+
+Animation:
+    animation: Animation effect for transitioning between views. Default is false.
+    animationDuration: Duration of the animation. Default is '1.4s' or a CSS variable.
+
+Search Configuration:
+    searchIn: Column to search in. Default is 'all'.
+    searchCaseSensitive: Whether the search is case-sensitive. Default is false.
+    apiSearching: Enable searching through an API. Default is false.
+    searchApi: API endpoint for searching. Default is an empty string.
+
+Auto-loading Configuration:
+    autoload: Whether to load more data automatically. Default is false.
+    autoloadWhen: Number of items remaining before triggering autoload. Default is 5.
+
+Auto-fetch Configuration:
+    autoFetch: Whether to fetch more data after rendering. Default is false.
+    autoFetchWhen: Number of items remaining before triggering auto-fetch. Default is 40.
+    dataApiUrl: API endpoint for fetching additional data. Default is an empty string.
+
+Lazy Loading Image:
+    lazyloadImageColor: Background color for lazy-loaded images. Default is 'linear-gradient(45deg, white 0%, black 59%)'.
+
+Example:
+    The autoloadWhen example clarifies that if there are 40 cards and you observe the 35th card, the library will load more cards.

@@ -1,0 +1,34 @@
+perPage:20,                                     | Number | default 20
+
+gridGap:"20px",                                 | String | default '10px'
+gridItemMinWidth:"300px",                       | String | default "200px"
+gridItemWidth:"fit",                            | String | default "fit"
+
+listGap:"20px",                                 | String | default '10px'
+listItemMinWidth:"300px",                       | String | default "500px"
+listItemWidth:"fit",                            | String | default "fit"
+ 
+position:dataView.POSITIONS.CENTER              | POSITIONS | default POSITIONS.LEFT
+
+animation:"slide",                              | String | default false
+animationDuration:"1.4s",                       | String | default from css var or 1
+
+searchIn:"title"                                | String | default "all"
+searchCaseSensitive:true                        | Boolean | default false
+apiSearching:true                               | Boolean | default false | for search in database through api
+searchApi:"https://fakestoreapi.com/products"   | String | default '' | search data from this searchApi
+
+
+autoload:true                                   | Boolean | default false
+autoloadWhen:5                                  | Number | default 5 | load befor 5 element remaining .
+
+autoFetch:true                                  | Boolean | default false | if data is low for rendering so fetch data after render the data
+autoFetchWhen:20                                | Number | default 40 | fetch before 40 dataset remaining in whole data
+dataApiUrl:"https://fakestoreapi.com/products"  | String | default '' | fetch data from this dataApiUrl
+
+
+lazyloadImageColor:"linear-gradient(45deg,white 0%, black 59%)"     | String | default #eee
+
+
+autoloadWhen:5 ex:
+cards 40 if observe card 35 when load more cards

@@ -1,0 +1,27 @@
+BuildIn Templator Placeholders
+one time parse placeholders syntex {{}}
+parse for every row placeholders syntex {%%}
+Column 
+{%column:column_name%} for print column value
+{%column:column_name[key]%} for if column is array or object
+{%column:column_name|upper%} for Capitalize All Leters
+{%column:column_name|lower%} for Small All Leters
+{%column:column_name|firstCap%} for Capitalize First Leter
+{%column:title|length:20%} for text length.
+{%column:column_name|formatNum%} for Formate Number like 100000 into 100,000
+
+Dates | parse all date placeholders in one time 
+{{date:d}} for print current Date  like   30
+{{date:m}} for print current Month like   6
+{{date:y}} for print current Year  like   2023
+
+Times | parse all Time placeholders in one time 
+{{time:h}} for print current Hours   like   3
+{{time:m}} for print current Minutes like   43
+{{time:s}} for print current Second  like   30
+
+Lazy Load Image 
+{{loadimage|height|width?optional|img_tag}}
+{{loadimage|40px|40px|<img src="https://source.unsplash.com/random/300x250/?{%counter%}" className="card-img-top" alt="..." loading="lazy">}}
+{{loadimage|40px|<img src="https://source.unsplash.com/random/300x250/?{%counter%}" className="card-img-top" alt="..." loading="lazy">}}
+

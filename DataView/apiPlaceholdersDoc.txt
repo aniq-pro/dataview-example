@@ -1,0 +1,29 @@
+For dataApiUrl:
+
+    {last:index} or {last}: Represents the last index fetched, allowing you to fetch data starting from the last index. For example, if the last index is 40, it will fetch data starting from index 39.
+
+    {last:counter}: Represents the last counter/row/length fetched, enabling you to fetch data starting from the last counter. For instance, if the last counter is 40, it will fetch data starting from counter 40.
+
+    {last:column}: Represents the last index column, letting you fetch data starting from the last index column.
+
+    {perPage}: Represents the number of items per page, helping in paginating the API request. It allows dynamic control over the number of items fetched.
+
+Example for dataApiUrl:
+
+    dataApiUrl: "https://jsonplaceholder.typicode.com/posts?start={last:id}&perPage={perPage}"
+    This example indicates that the API URL is constructed to fetch data starting from the last ID with a specified number of items per page.
+
+For searchApi:
+
+    {query}: Represents the search query for simple searches.
+
+    {searchCaseSensitive}: Represents whether the search is case-sensitive. It returns true or false.
+
+    {column}: Represents the column on which the search is performed. It returns the value set in the searchIn configuration.
+
+Example for searchApi:
+
+    searchApi: "https://jsonplaceholder.typicode.com/posts?query={query}&searchCaseSensitive={searchCaseSensitive}&column={column}"
+    This example shows that the search API URL is constructed to handle a search query, case sensitivity, and the specific column to search in.
+
+These placeholders provide flexibility and customization, allowing users to interact with APIs and perform searches tailored to their specific requirements.

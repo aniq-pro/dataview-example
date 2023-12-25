@@ -1,0 +1,21 @@
+One-time Parse Placeholders ({{}}):
+    {{date:d}}: Prints the current day of the month (e.g., 30).
+    {{date:m}}: Prints the current month (e.g., 6).
+    {{date:y}}: Prints the current year (e.g., 2023).
+    {{time:h}}: Prints the current hour (e.g., 3).
+    {{time:m}}: Prints the current minute (e.g., 43).
+    {{time:s}}: Prints the current second (e.g., 30).
+    {{loadimage|height|width?optional|img_tag}}: Lazy loads an image with specified height and width, optionally including an img tag.
+
+Parse for Every Row Placeholders ({%%}):
+    {%column:column_name%}: Prints the value of the specified column.
+    {%column:column_name[key]%}: Prints the value of a key within a column if the column is an array or object.
+    {%column:column_name|allCap%}: Capitalizes all letters in the column value.
+    {%column:column_name|allSmall%}: Converts all letters in the column value to lowercase.
+    {%column:column_name|firstCap%}: Capitalizes the first letter of the column value.
+    {%column:title|length:20%}: Limits the length of the column value to 20 characters.
+    {%column:column_name|formatNum%}: Formats the column value as a number with commas (e.g., 100000 becomes 100,000).
+
+Lazy Load Image Examples:
+    {{loadimage|40px|40px|<img src="https://source.unsplash.com/random/300x250/?{%counter%}" className="card-img-top" alt="..." loading="lazy">}}: Lazy loads an image with a specified height and width (40px x 40px) using an img tag.
+    {{loadimage|40px|<img src="https://source.unsplash.com/random/300x250/?{%counter%}" className="card-img-top" alt="..." loading="lazy">}}: Lazy loads an image with a specified height (40px) and uses an img tag.

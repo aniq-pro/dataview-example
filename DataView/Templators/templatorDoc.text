@@ -1,0 +1,15 @@
+Templator Functions
+
+oneTimeParse | which is  call just one time. @parameter Template . must return Template
+
+parseOnEveryRow | which is for call every row . call in loop @parameter Template,Data,NumberOfRow , must return Template
+
+Placeholders
+
+{%column:price|formateNum<add:column:discount>%} {%column:price|formateNum<add:10>%} % allowed
+{%column:price|formateNum<sub:column:discount>%} {%column:price|formateNum<sub:10>%} % allowed
+{%column:price|formateNum<mult:column:discount>%} {%column:price|formateNum<mult:10>%} % allowed
+{%column:price|formateNum<div:column:discount>%} {%column:price|formateNum<div:10>%} % allowed
+
+
+

@@ -1,0 +1,54 @@
+:root{
+    --animation-duration:.3s;
+} 
+/* fade , slide */
+/* Fade */
+.fade-out{
+    animation:fade-out ease var(--animation-duration) 1;
+}
+.fade-in{
+    animation:fade-in ease var(--animation-duration) 1;
+}
+@keyframes fade-out {
+    0%{opacity: 1;}
+    100%{opacity: 0;}
+}
+@keyframes fade-in {
+    0%{opacity: 0;}
+    100%{opacity: 1;}
+}
+/* Slide */
+.slide-left-out{
+    animation:slide-left-out ease var(--animation-duration) 1 forwards;
+}
+.slide-left-in{
+    animation:slide-left-in ease var(--animation-duration) 1;
+}
+@keyframes slide-left-out {
+    0%{left: 0;opacity: 1;}
+    70%{left: 100%;opacity: 1;}
+    75%{left: 110%;opacity: 0;}
+    100%{left: -110%;opacity: 0;}
+}
+@keyframes slide-left-in {
+    0%{left: -110%;opacity: 0;}
+    5%{left: -110%;opacity: 1;}
+    100%{left: 0;opacity: 1;}
+}
+.slide-right-out{
+    animation:slide-right-out ease var(--animation-duration) 1 forwards;
+}
+.slide-right-in{
+    animation:slide-right-in ease var(--animation-duration) 1;
+}
+@keyframes slide-right-out {
+    0%{right: 0;opacity: 1;}
+    70%{right: 100%;opacity: 1;}
+    75%{right: 110%;opacity: 0;}
+    100%{right: -110%;opacity: 0;}
+}
+@keyframes slide-right-in {
+    0%{right: -110%;opacity: 0;}
+    5%{right: -110%;opacity: 1;}
+    100%{right: 0;opacity: 1;}
+}
