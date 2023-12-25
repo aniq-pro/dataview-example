@@ -33,13 +33,13 @@ data = repeat(data,500)
 const dataView = new DataView(data, viewContainer);
 dataView.config({
   perPage: 20,
-  // autoload:true,
+  autoload:true,
   autoFetch: true,
   autoFetchWhen:80,
   dataApiUrl: "https://jsonplaceholder.typicode.com/posts?start={last:title}&perPage={perPage}",
   gridGap: "20px",
   gridItemMinWidth: "200px",
-  animation: "slide",
+  animation: "fade",
   lazyloadImageColor:'#ddd',
   // apiSearching:true,
   searchApi: "https://jsonplaceholder.typicode.com/posts?query={query}&searchCaseSensitive={searchCaseSensitive}&column={column}",
