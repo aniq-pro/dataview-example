@@ -49,7 +49,6 @@ export default class DataView {
     #animationOn = null
     #animationDuration
     // 
-    #rootStyle
     #position
     // 
     #autoFetch
@@ -63,7 +62,7 @@ export default class DataView {
     #errors = []
     constructor(Data, Container) {
         this.#mainContainer = Container
-        // this.#mainContainer.style.overflow = "hidden"
+        this.#mainContainer.style.overflow = "hidden"
         if (!Array.isArray(Data)) {
             this.#errors.push("Invalid Data | Data is Not An Array | Data must be Array Object")
         } else if (Object.prototype.toString.call(Data[0]) !== '[object Object]') {
@@ -81,11 +80,9 @@ export default class DataView {
             EVENLY: "justify-content: space-evenly;"
         }
     }
-    config(Options = {}) {
+    config(Options = {},View = "grid") {
         // if (this.#errors.length > 0) { return }
         this.#renderData = this.#data
-        const root = document.querySelector(":root");
-        this.#rootStyle = getComputedStyle(root);
         this.#perPage = Options.perPage || 20;
         this.#lazyloadImageColor = Options.lazyloadImageColor || "#eee";
         this.#autoload = Options.autoload || false;
@@ -97,14 +94,6 @@ export default class DataView {
             if (this.dataApiUrl == "") { this.#errors.push("Data API Url not provided for fetching data."); }
             else if (typeof this.dataApiUrl != 'string') { this.#errors.push("Invalid Data API Url"); }
             else if (!this.dataApiUrl.startsWith("http") && !this.dataApiUrl.startsWith("https")) { this.#errors.push("Invalid Data API Url .Protocol not Provided"); }
-        }
-
-        this.apiSearching = Options.apiSearching || false;
-        this.#searchApi = Options.searchApi || ""
-        if (this.apiSearching) {
-            if (this.#searchApi == "") { this.#errors.push("Search API Url not provided for fetching data."); }
-            else if (typeof this.#searchApi != 'string') { this.#errors.push("Invalid Search API Url"); }
-            else if (!this.#searchApi.startsWith("http") && !this.#searchApi.startsWith("https")) { this.#errors.push("Invalid Search API Url .Protocol not Provided"); }
         }
         // grid
         this.#gridGap = Options.gridGap || "10px";
@@ -123,44 +112,11 @@ export default class DataView {
         this.searchCaseSensitive = Options.searchCaseSensitive || false;
         // 
         this.#animation = Options.animation || false;
-        if (Options.animationDuration) {
-            root.style.setProperty("--animation-duration", Options.animationDuration);
-        }
-        this.#animationDuration = Options.animationDuration?.slice(0, -1) || this.#rootStyle.getPropertyValue("--animation-duration").slice(0, -1) || 1
+        this.#animationDuration = Options.animationDuration?.slice(0, -1) || '.5'
+        // 
         this.#position = Options.position || this.POSITIONS.LEFT;
         // 
-        this.tableClass = 'data-view-table table';
-        this.listContainerClass = 'data-view-list';
-        this.gridContainerClass = 'data-view-grid';
-
-        this.#gridContainer = document.createElement('div');
-        this.#gridContainer.id = 'ViewGridContainer';
-        this.#gridContainer.className = this.gridContainerClass;
-        this.#gridContainer.style.display = "grid";
-        this.#gridContainer.style.gap = this.#gridGap;
-        this.#gridContainer.style.position = "relative";
-        this.#mainContainer.append(this.#gridContainer);
-        // list
-        this.#listContainer = document.createElement('div');
-        this.#listContainer.id = 'ViewListContainer';
-        this.#listContainer.className = this.listContainerClass;
-        this.#listContainer.style.display = "grid";
-        this.#listContainer.style.gap = this.#listGap;
-        this.#listContainer.style.position = "relative";
-        this.#mainContainer.append(this.#listContainer);
-        // Table
-        this.#tableContainer = document.createElement('table');
-        this.#tableContainer.id = 'ViewTableContainer';
-        this.#tableContainer.style.position = "relative";
-        this.#tableContainer.className = this.tableClass;
-        this.#tableContainer.createTBody();
-        this.#mainContainer.append(this.#tableContainer);
-        // Search
-        this.#searchContainer = document.createElement('div');
-        this.#searchContainer.id = 'ViewSearchContainer';
-        this.#searchContainer.style.display = "grid";
-        this.#searchContainer.style.position = "relative";
-        this.#mainContainer.append(this.#searchContainer);
+        this.#view = View
         // 
         this.#totalPages = this.#calculateTotalPages();
         this.columns = Object.keys(this.#data[0]);
@@ -190,9 +146,13 @@ export default class DataView {
                 for (let index = 0; index < length; index++) {
                     if (entries[index].isIntersecting) {
                         if (this.#currentPage < this.#totalPages) {
-                            this.#render(false)
-                            this.#currentPage += 1;
-                            console.log(this.#currentPage);
+                            this.#rendering(false)
+                            if (this.#renderState == "main") {
+                                this.#currentPage++;
+                            }else{
+                                this.#searchCurrentPage++
+                            }
+                            
                         }
 
                         this.#autoloadObserver.unobserve(entries[index].target)
@@ -200,10 +160,87 @@ export default class DataView {
                 }
             }, { rootMargin: "100px" });
         }
-        // 
-        window.addEventListener("resize", () => {
+        const gridView = (display = "none")=>{
+            this.#gridContainer = document.createElement('div');
+            this.#gridContainer.id = 'ViewGridContainer';
+            this.gridContainerClass = 'data-view-grid';
+            this.#gridContainer.className = this.gridContainerClass;
+            this.#gridContainer.style.display = display;
+            this.#gridContainer.style.gap = this.#gridGap;
+            this.#gridContainer.style.position = "relative";
+            this.#mainContainer.append(this.#gridContainer);
             this.#gridStyle();
-        })
+        } 
+        const listView = (display = "none")=>{
+            this.#listContainer = document.createElement('div');
+            this.#listContainer.id = 'ViewListContainer';
+            this.listContainerClass = 'data-view-list';
+            this.#listContainer.className = this.listContainerClass;
+            this.#listContainer.style.display = display;
+            this.#listContainer.style.gap = this.#listGap;
+            this.#listContainer.style.position = "relative";
+            this.#mainContainer.append(this.#listContainer);
+            this.#listStyle()
+        }
+        const tableView = (display = "none")=>{
+            this.#tableContainer = document.createElement('table');
+            this.#tableContainer.id = 'ViewTableContainer';
+            this.#tableContainer.style.position = "relative";
+            this.tableClass = 'data-view-table table';
+            this.#tableContainer.className = this.tableClass;
+            this.#tableContainer.createTBody();
+            this.#tableContainer.style.display = display
+            this.#mainContainer.append(this.#tableContainer);
+        }
+        if (View == "grid") {
+            gridView("grid")
+            this.#viewContainer = this.#gridContainer
+        }else if(View == "list"){
+            listView("grid");
+            this.#viewContainer = this.#listContainer
+        }else if(View == "table"){
+            tableView("table");
+            this.#viewContainer = this.#tableContainer
+        }
+        this.#searchContainer = document.createElement('div');
+        // time out | set these configuration after few seconds
+        setTimeout(() => {
+            // Set Containers 
+            if (View != "grid") {
+                gridView()
+            }
+            if(View != "list"){
+                listView()
+            }
+            if(View != "table"){
+                tableView()
+            }
+            if (this.#tableContainer.tHead == null) {
+                let tHead = this.#tableContainer.createTHead();
+                let tableHeadings = "<tr>";
+                for (let index = 0; index < this.#tableColumns.length; index++) {
+                    tableHeadings += `<th>${this.#tableColumns[index]}</th>`;
+                }
+                tableHeadings += "</tr>";
+                tHead.innerHTML = tableHeadings
+            }
+            // Search
+            this.apiSearching = Options.apiSearching || false;
+            this.#searchApi = Options.searchApi || ""
+            if (this.apiSearching) {
+                if (this.#searchApi == "") { this.#errors.push("Search API Url not provided for fetching data."); }
+                else if (typeof this.#searchApi != 'string') { this.#errors.push("Invalid Search API Url"); }
+                else if (!this.#searchApi.startsWith("http") && !this.#searchApi.startsWith("https")) { this.#errors.push("Invalid Search API Url .Protocol not Provided"); }
+            }
+            this.#searchContainer.id = 'ViewSearchContainer';
+            this.#searchContainer.style.display = "grid";
+            this.#searchContainer.style.position = "relative";
+            this.#mainContainer.append(this.#searchContainer);
+            // 
+            window.addEventListener("resize", () => {
+                this.#gridStyle();
+            });
+        }, 2500);
     }
     get totalPages() {
         let totalPages;
@@ -247,7 +284,6 @@ export default class DataView {
         if (!Html.endsWith(`</${tagname}>`)) { this.#errors.push("Invalid List Item Template"); return "" }
         this.#listItemTagName = tagname;
         this.#listItemHtml = this.#templator.oneTimeParse(Html);
-        this.#listStyle();
     }
     /**
      * @param {string} Html
@@ -260,7 +296,6 @@ export default class DataView {
         if (!Html.endsWith(`</${tagname}>`)) { this.#errors.push("Invalid Grid Item Template"); return "" }
         this.#gridItemTagName = tagname;
         this.#gridItemHtml = this.#templator.oneTimeParse(Html);
-        this.#gridStyle();
     }
     /**
      * @param {string} Html
@@ -270,20 +305,21 @@ export default class DataView {
         Html = Html.trim()
         if (!Html.startsWith("<")) { this.#errors.push("Invalid Table Row Template"); return "" }
         this.#tableRowHtml = this.#templator.oneTimeParse(Html);
-        this.#gridStyle();
     }
     /**
      * @param {array} Array
      */
     set tableColumns(Array) {
         this.#tableColumns = Array
-        let tHead = this.#tableContainer.createTHead();
-        let tableHeadings = "<tr>";
-        for (let index = 0; index < this.#tableColumns.length; index++) {
-            tableHeadings += `<th>${this.#tableColumns[index]}</th>`;
+        if (this.#view == "table") {
+            let tHead = this.#tableContainer.createTHead();
+            let tableHeadings = "<tr>";
+            for (let index = 0; index < this.#tableColumns.length; index++) {
+                tableHeadings += `<th>${this.#tableColumns[index]}</th>`;
+            }
+            tableHeadings += "</tr>";
+            tHead.innerHTML = tableHeadings
         }
-        tableHeadings += "</tr>";
-        tHead.innerHTML = tableHeadings
     }
     /**
      * @param {string} Value
@@ -308,7 +344,7 @@ export default class DataView {
         this.#reRenderGrid = true;
         this.#reRenderList = true;
         this.#reRenderTable = true;
-        this.#render()
+        this.#rendering()
     }
     /**
      * @param {string} View
@@ -316,11 +352,11 @@ export default class DataView {
     set view(View) {
         if (this.inSelection) {return "You are in Selection Mode";}
         this.#view = View;
-        if (this.#viewContainer == this.#searchContainer) {
-            this.#searchContainerConfig(View);
-            this.#render();
-            return;
-        }
+        // if (this.#viewContainer == this.#searchContainer) {
+        //     this.#searchContainerConfig(View);
+        //     this.#rendering();
+        //     return;
+        // }
         switch (View) {
             case "grid":
                 this.#listContainer.style.display = "none"
@@ -330,7 +366,7 @@ export default class DataView {
 
                 if (this.#reRenderGrid) {
                     this.#lastRenderRow = this.#firstRenderRow
-                    this.#render()
+                    this.#rendering()
                 }
                 break;
             case "list":
@@ -341,7 +377,7 @@ export default class DataView {
 
                 if (this.#reRenderList) {
                     this.#lastRenderRow = this.#firstRenderRow
-                    this.#render()
+                    this.#rendering()
                 }
                 break;
             case "table":
@@ -352,7 +388,7 @@ export default class DataView {
 
                 if (this.#reRenderTable) {
                     this.#lastRenderRow = this.#firstRenderRow
-                    this.#render()
+                    this.#rendering()
                 }
                 break;
         }
@@ -362,7 +398,7 @@ export default class DataView {
         if (Query == "") {
             if (this.#view == "grid") { this.#viewContainer = this.#gridContainer; this.#gridContainer.style.display = "grid" }
             else if (this.#view == "list") { this.#viewContainer = this.#listContainer; this.#listContainer.style.display = "grid" }
-            else if (this.#view == "table") { this.#viewContainer = this.#tableContainer; this.#tableContainer.style.display = "block" }
+            else if (this.#view == "table") { this.#viewContainer = this.#tableContainer; this.#tableContainer.style.display = "table" }
             this.#searchContainer.style.display = "none";
             this.#renderData = this.#data;
             // this.#currentPage = 1
@@ -393,7 +429,6 @@ export default class DataView {
                     return this.searchIn
                 }
             });
-            console.log(`url : ${url}`); 
             let data = await fetch(url);
             data = await data.json();
             this.#renderData = data;
@@ -418,9 +453,13 @@ export default class DataView {
             if (this.#view == "grid") { this.#gridContainer.style.display = "none" }
             else if (this.#view == "list") { this.#listContainer.style.display = "none" }
             else if (this.#view == "table") { this.#tableContainer.style.display = "none" }
-
-            this.#viewContainer = this.#searchContainer;
-            this.#viewContainer.style.display = "grid";
+            if (this.#view == "table"){
+                this.#viewContainer = this.#tableContainer
+                this.#viewContainer.style.display = "table"
+            }else{
+                this.#viewContainer = this.#searchContainer;
+                this.#viewContainer.style.display = "grid";
+            }
         }
         this.#searchFirstRenderRow = 0
         this.#searchLastRenderRow = 0
@@ -428,9 +467,11 @@ export default class DataView {
         this.#searchTotalPages = this.#calculateTotalPages()
         this.#renderState = "search";
 
-        this.#render();
+        this.#rendering();
     }
-
+    render(){
+        this.#rendering()
+    }
     async #fetchData() {
         // console.log(`this.#data.length ${this.#data.length}`);
         // console.log(`this.#lastRenderRow ${this.#lastRenderRow + 1}`);
@@ -465,7 +506,8 @@ export default class DataView {
             }
         }
     }
-    #render(newInsert = true) {
+    
+    #rendering(newInsert = true) {
         if (this.errors.length > 0) { return; }
         let itemHtml;
         let firstRow;
@@ -475,7 +517,7 @@ export default class DataView {
                 firstRow = this.#firstRenderRow;
             } else {
                 firstRow = ++this.#lastRenderRow;
-            }
+            }   
             lastRow = this.#lastRenderRow;
         } else if (this.#renderState == "search") {
             if (newInsert) {
@@ -520,8 +562,9 @@ export default class DataView {
         this.#lastRenderRow = --index;
         // if (this.#renderState == "search" && this.#currentPage > this.#searchPage) {
         if (this.#renderState == "search") {
-            this.#searchLastRenderRowForNext = this.#lastRenderRow;
-            this.#searchPage++
+            // this.#searchLastRenderRowForNext = this.#lastRenderRow;
+            this.#searchLastRenderRow = this.#lastRenderRow;
+            // this.#searchPage++
         }
         if (this.#animation != false && this.#animationOn != null) {
             this.#animator(() => {
@@ -553,6 +596,7 @@ export default class DataView {
         } else {
             let container = this.#viewContainer
             if (this.#view == "table") {
+                console.log(this.#viewContainer);
                 container = container.tBodies[0]
             }
             if (newInsert) {
@@ -595,13 +639,34 @@ export default class DataView {
                 td.innerHTML = `<input type="checkbox" class="${options.class}" selection="all">`;
             }
             for (let index = start; index <= end; index++) {
+                if (rows[index+1] == undefined) { break; }
                 var td = rows[index+1].insertCell(0);
                 td.innerHTML = `<input type="checkbox" class="${options.class}" selection="${index}">`;
             }
         }else{
             const children = this.#viewContainer.children;
-            for (let index = start; index <= end; index++) {
-                children[index].insertAdjacentHTML("afterbegin",`<input type="checkbox" class="${options.class}" selection="${index}" style="position: absolute;top: ${options.top};right:${options.right};bottom:${options.bottom};left: ${options.left};z-index: 5;">`)
+            if (children[start]==undefined) {
+                console.log(`start : ${start}`);
+                console.log(`this.#perPage : ${this.#perPage}`);
+                console.log(`this.#currentPage : ${this.#currentPage}`);
+                // console.log(`(this.#currentPage - Math.ceil((this.#currentPage / 2))) : ${(this.#currentPage - Math.ceil((this.#currentPage / 2)))}`);
+                // console.log(`Math.ceil((this.#currentPage / 2) : ${Math.ceil((this.#currentPage / 2))}`);
+                // console.log(`(this.#perPage * (this.#currentPage - Math.ceil((this.#currentPage / 2))) : ${(this.#perPage * (this.#currentPage - Math.ceil((this.#currentPage / 2))))}`);
+                const inputs = this.#viewContainer.querySelectorAll("input[selection]");
+                const startIndex = inputs.length
+                const last = inputs.length + this.#perPage
+                console.log(`startIndex : ${startIndex}`);
+                console.log(`last : ${last}`);
+                console.log(children[last]);
+                for (let index = startIndex; index <= last; index++) {
+                    if (children[index] == undefined) { break; }
+                    children[index].insertAdjacentHTML("afterbegin",`<input type="checkbox" class="${options.class}" selection="${index}" style="position: absolute;top: ${options.top};right:${options.right};bottom:${options.bottom};left: ${options.left};z-index: 5;">`)
+                }
+            }else{
+                for (let index = start; index <= end; index++) {
+                    if (children[index] == undefined) { break; }
+                    children[index].insertAdjacentHTML("afterbegin",`<input type="checkbox" class="${options.class}" selection="${index}" style="position: absolute;top: ${options.top};right:${options.right};bottom:${options.bottom};left: ${options.left};z-index: 5;">`)
+                }
             }
         }
     }
@@ -614,9 +679,13 @@ export default class DataView {
 
         this.selectionOptions = Options;
         this.inSelection = true;
-        this.#setupSelection(0,this.#perPage-1);
+        if (this.#viewContainer.rows) {
+            this.#setupSelection(0,this.#viewContainer.rows.length -1);
+        }else{
+            this.#setupSelection(0,this.#viewContainer.children.length-1);
+        }
         // add Event Listener 
-        this.#mainContainer.addEventListener("click",(e)=>{
+        this.#mainContainer.onclick = (e)=>{
             let element;
             if (this.#viewContainer == this.#gridContainer) {
                 element = e.target.closest(`#ViewGridContainer > ${this.#gridItemTagName}`);
@@ -664,29 +733,41 @@ export default class DataView {
                                 data:this.#renderData[index]
                             });
                             input.setAttribute("checked",true);
+                            input.checked = true;
                         }
                     }else{
                         for (let index = 0; index < length; index++) {
                             const input = inputs[index+1];
                             input.removeAttribute("checked");
+                            input.checked = false;
                             this.selected.splice(this.selected.findIndex(element=>element.index==index), 1);
                         }
                     }
                     if (Callback != false) {
-                        Callback({});
+                        Callback({
+                            checked:input.checked
+                        });
                     }
                 }
             }
-        });
+        }
     }
     stopSelection(){
         this.selected = [];
         this.inSelection = false;
         const inputs = this.#viewContainer.querySelectorAll("input[selection]");
         const length = inputs.length
-        for (let index = 0; index < length; index++) {
-            inputs[index].remove();
+        if(this.#viewContainer.rows){
+            // this.#viewContainer.rows[0].deleteCell(0)
+            for (let index = 0; index < length; index++) {
+                inputs[index].parentElement.remove();
+            }
+        }else{
+            for (let index = 0; index < length; index++) {
+                inputs[index].remove();
+            }
         }
+        this.#mainContainer.onclick = null
     }
     updateData(Callback){
         this.#data = Callback(this.#data);
@@ -711,7 +792,7 @@ export default class DataView {
         this.#reRenderGrid = true;
         this.#reRenderList = true;
         this.#reRenderTable = true;
-        this.#render()
+        this.#rendering()
     }
     nextPage() {
         if (this.inSelection) {return "You are in Selection Mode";}
@@ -723,17 +804,17 @@ export default class DataView {
                 this.#reRenderTable = true;
                 this.#currentPage += 1
                 this.#animationOn = "nextPage"
-                this.#render()
+                this.#rendering()
             }
         } else if (this.#renderState == "search") {
             if (this.#searchCurrentPage < this.#searchTotalPages) {
-                this.#searchLastRenderRow = ++this.#searchLastRenderRowForNext;
-                this.#searchFirstRenderRow = this.#searchLastRenderRowForNext;
+                // this.#searchLastRenderRow = ++this.#searchLastRenderRowForNext;
+                this.#searchFirstRenderRow = ++this.#searchLastRenderRow;
                 console.log(`this.#searchLastRenderRow : ${this.#searchLastRenderRow}`);
                 console.log(`this.#searchLastRenderRowForNext : ${this.#searchLastRenderRowForNext}`);
                 this.#searchCurrentPage += 1;
                 this.#animationOn = "nextPage"
-                this.#render()
+                this.#rendering()
             }
         }
 
@@ -754,7 +835,7 @@ export default class DataView {
         //         this.#searchPage--;
         //     }
         //     this.#animationOn = "previousPage"
-        //     this.#render();
+        //     this.#rendering();
         // }
         if (this.#renderState == "main") {
             if (this.#currentPage > 1) {
@@ -765,7 +846,7 @@ export default class DataView {
                 this.#reRenderTable = true;
                 this.#currentPage--;
                 this.#animationOn = "previousPage"
-                this.#render()
+                this.#rendering()
             }
         } else if (this.#renderState == "search") {
             if (this.#searchCurrentPage > 1) {
@@ -776,7 +857,7 @@ export default class DataView {
                 console.log(`this.#searchLastRenderRowForNext : ${this.#searchLastRenderRowForNext}`);
                 this.#searchCurrentPage--;
                 this.#animationOn = "previousPage"
-                this.#render()
+                this.#rendering()
             }
         }
     }
