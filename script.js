@@ -38,14 +38,16 @@ dataView.config({
   autoFetchWhen:80,
   dataApiUrl: "https://jsonplaceholder.typicode.com/posts?start={last:title}&perPage={perPage}",
   gridGap: "20px",
+  gridItemWidth: "200px",
   gridItemMinWidth: "200px",
-  animation: "fade",
+  // animation: "fade",
   lazyloadImageColor:'#ddd',
   // apiSearching:true,
   searchApi: "https://jsonplaceholder.typicode.com/posts?query={query}&searchCaseSensitive={searchCaseSensitive}&column={column}",
   // searchCaseSensitive:true,
-  position: dataView.POSITIONS.RIGHT
-});
+  position: dataView.POSITIONS.AROUND,
+  // animationDuration:"4s",  
+},'grid');
 console.log(dataView);
 // let t1 = performance.now();
 
@@ -67,7 +69,7 @@ console.log(dataView);
 // </div>`);
 // {%load|img|250px|<img src="images/{%column:img%}" class="card-img-top" alt="..." loading="lazy">%}
 // https://source.unsplash.com/random/300x250/?{%counter%}
-dataView.register.templator(Templator) 
+// dataView.register.templator(Templator) 
 dataView.gridItemTemplate = `<div class="card custom-card">
 <span class="badge bg-primary" style="position: absolute;top: 10px;right: 10px;">{%counter%}</span>
 {{loadimage|120px|100%|<img src="images/{%column:img%}" class="card-img-top" alt="Product Image" loading="lazy">}}
@@ -122,7 +124,8 @@ dataView.tableRowHtml = `<tr>
 dataView.tableClass = "table table-light table-sm"
 
 dataView.tableColumns = ["S.no", "Img", "Title", "Price", "Rating", "Brand", "Discount"]
-dataView.view = "grid"
+// dataView.view = "grid"
+dataView.render()
 dataView.searchIn = "all"
 // dataView.startSelection({top:"10px",left:"10px"},(options)=>{
 //   console.log(dataView.selected);
