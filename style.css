@@ -24,10 +24,16 @@
     left: 0;
 } */
 /*  */
-body {
+/* body {
     background-color: #eee;
 }
+*/
 
+/* .custom-card:hover {
+    transform: scale(1.05);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+} */
+/* .
 .custom-card {
     border: none;
     border-radius: 15px;
@@ -36,12 +42,6 @@ body {
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     background-color: #fff;
     color: #495057;
-    /* height: 250px; Adjust height as needed */
-}
-
-.custom-card:hover {
-    transform: scale(1.05);
-    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
 }
 
 .data-view-grid .card-img-top {
@@ -88,10 +88,9 @@ body {
 .rating {
     font-size: 1rem;
 }
-/*  */
 input[type=checkbox]{
     width: 18px;
     height: 18px;
     border-radius: 70px;
     accent-color: white;
-}
+} */
